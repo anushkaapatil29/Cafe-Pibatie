@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Café Pibatie — Admin</title>
+<meta name="description" content="Café Pibatie — Modern Hindustani fusion cafe in Borivali and Andheri. Pure vegetarian and Jain-friendly dining." />
+<meta property="og:title" content="Café Pibatie — Modern Hindustani Fusion" />
+<meta property="og:description" content="Modern Hindustani fusion cafe in Borivali and Andheri. Pure vegetarian and Jain-friendly dining." />
+<meta property="og:image" content="assets/og-image.jpg" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_IN" />
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --tc:#C1603B;--tcd:#9E4A28;--tcl:#D4795A;
+  --bg:#F2EDE4;--bgd:#E6DDD0;
+  --sage:#7A9172;--sagel:#A3B89A;
+  --ow:#FAF7F2;--br:#3D2B1F;--brl:#6B4C38;
+  --gold:#C9A24E;--goldl:#E2C47A;
+  --tm:#2E1E14;--tmut:#7A6355;
+  --red:#DC2626;--green:#16A34A;
+  --tr:0.22s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:var(--br);color:var(--bg);min-height:100vh}
+
+/* ────── LOGIN SCREEN ────── */
+#loginScreen{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;background:var(--br);
+}
+.login-box{
+  background:rgba(255,255,255,0.05);border:1px solid rgba(201,162,78,0.2);
+  border-radius:12px;padding:44px 40px;width:100%;max-width:380px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.4);
+}
+.login-logo{
+  text-align:center;margin-bottom:28px;
+}
+.login-logo h1{font-family:"Cormorant Garamond",serif;font-size:2rem;color:var(--goldl);line-height:1.1}
+.login-logo p{font-size:0.72rem;color:rgba(242,237,228,0.4);letter-spacing:0.15em;text-transform:uppercase;margin-top:4px}
+.login-field{margin-bottom:16px}
+.login-field label{display:block;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(242,237,228,0.5);margin-bottom:6px}
+.login-field input{
+  width:100%;padding:12px 14px;
+  background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.12);
+  border-radius:4px;color:var(--bg);font-family:"DM Sans",sans-serif;font-size:0.9rem;outline:none;
+  transition:border-color var(--tr);
+}
+.login-field input:focus{border-color:var(--tc)}
+.login-field input::placeholder{color:rgba(255,255,255,0.2)}
+.btn-login{
+  width:100%;padding:13px;background:var(--tc);color:#fff;
+  border:none;border-radius:4px;cursor:pointer;font-family:"DM Sans",sans-serif;
+  font-size:0.9rem;font-weight:500;letter-spacing:0.06em;margin-top:6px;
+  transition:background var(--tr);
+}
+.btn-login:hover{background:var(--tcd)}
+.login-error{
+  color:#f87171;font-size:0.8rem;text-align:center;margin-top:10px;
+  display:none;padding:8px;background:rgba(220,38,38,0.1);border-radius:3px;
+}
+.login-hint{
+  text-align:center;margin-top:16px;font-size:0.72rem;
+  color:rgba(242,237,228,0.25);
+}
+
+/* ────── MAIN APP (hidden until logged in) ────── */
+#adminApp{display:none}
+.admin-layout{display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{
+  width:220px;flex-shrink:0;
+  background:rgba(0,0,0,0.3);
+  border-right:1px solid rgba(201,162,78,0.12);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.sb-logo{padding:22px 18px 18px;border-bottom:1px solid rgba(201,162,78,0.12)}
+.sb-logo h1{font-family:"Cormorant Garamond",serif;font-size:1.25rem;font-weight:600;color:var(--goldl);line-height:1.2}
+.sb-logo p{font-size:0.65rem;color:rgba(242,237,228,0.35);letter-spacing:0.1em;margin-top:3px}
+.sb-live{display:inline-flex;align-items:center;gap:5px;background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.25);color:#4ade80;border-radius:50px;padding:3px 9px;font-size:0.62rem;letter-spacing:0.08em;margin-top:7px}
+.sb-live::before{content:"";width:6px;height:6px;border-radius:50%;background:#4ade80;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.sb-nav{padding:10px 0;flex:1}
+.sb-section{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(242,237,228,0.28);padding:10px 18px 5px}
+.sb-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 18px;cursor:pointer;color:rgba(242,237,228,0.55);
+  font-size:0.83rem;border-left:3px solid transparent;
+  transition:all var(--tr);
+}
+.sb-item:hover{color:var(--bg);background:rgba(255,255,255,0.04)}
+.sb-item.active{color:var(--goldl);border-left-color:var(--gold);background:rgba(201,162,78,0.08)}
+.sb-icon{font-size:.95rem;flex-shrink:0}
+.sb-foot{padding:14px 18px;border-top:1px solid rgba(201,162,78,0.1);font-size:0.72rem;color:rgba(242,237,228,0.3);display:flex;flex-direction:column;gap:6px}
+.sb-foot a{color:var(--tcl);text-decoration:none}
+.sb-foot button{background:none;border:1px solid rgba(220,38,38,0.3);color:#f87171;border-radius:3px;padding:5px 10px;cursor:pointer;font-size:0.72rem;font-family:"DM Sans",sans-serif;transition:all var(--tr)}
+.sb-foot button:hover{background:rgba(220,38,38,0.15)}
+
+/* Main */
+.main{flex:1;overflow-y:auto;background:var(--ow);color:var(--tm)}
+.page{display:none;padding:30px 32px}
+.page.active{display:block}
+.pg-title{font-family:"Cormorant Garamond",serif;font-size:1.9rem;font-weight:600;color:var(--br);margin-bottom:4px}
+.pg-title em{color:var(--tc);font-style:italic}
+.pg-sub{color:var(--tmut);font-size:0.86rem;margin-bottom:26px}
+
+/* Stat grid */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:#fff;border:1px solid var(--bgd);border-radius:8px;padding:18px;position:relative;overflow:hidden}
+.stat-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc)}
+.stat-card.green::before{background:var(--sage)}
+.stat-card.gold::before{background:var(--gold)}
+.stat-card.dark::before{background:var(--br)}
+.stat-label{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:7px}
+.stat-val{font-size:1.9rem;font-weight:700;color:var(--br);line-height:1}
+.stat-sub{font-size:0.72rem;color:var(--tmut);margin-top:5px}
+
+/* Card */
+.card{background:#fff;border:1px solid var(--bgd);border-radius:8px;margin-bottom:18px;overflow:hidden}
+.card-hd{padding:14px 18px;border-bottom:1px solid var(--bgd);display:flex;align-items:center;justify-content:space-between}
+.card-hd h3{font-family:"Cormorant Garamond",serif;font-size:1.1rem;font-weight:600;color:var(--br)}
+.card-body{padding:18px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:0.83rem}
+.tbl th{background:var(--bg);text-align:left;padding:9px 13px;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--tmut);border-bottom:1px solid var(--bgd);white-space:nowrap}
+.tbl td{padding:9px 13px;border-bottom:1px solid var(--bgd);color:var(--tm);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(193,96,59,.03)}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:50px;font-size:0.68rem;font-weight:500;letter-spacing:.05em}
+.bg-green{background:rgba(22,163,74,.1);color:var(--green);border:1px solid rgba(22,163,74,.2)}
+.bg-red{background:rgba(220,38,38,.1);color:var(--red);border:1px solid rgba(220,38,38,.2)}
+.bg-gold{background:rgba(201,162,78,.1);color:#92610c;border:1px solid rgba(201,162,78,.3)}
+.bg-grey{background:rgba(61,43,31,.08);color:var(--br);border:1px solid rgba(61,43,31,.15)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:4px;border:none;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:0.8rem;letter-spacing:.04em;transition:all var(--tr)}
+.btn-p{background:var(--tc);color:#fff}.btn-p:hover{background:var(--tcd)}
+.btn-o{background:transparent;color:var(--tc);border:1.5px solid var(--tc)}.btn-o:hover{background:rgba(193,96,59,.06)}
+.btn-d{background:var(--red);color:#fff}.btn-d:hover{background:#b91c1c}
+.btn-g{background:var(--green);color:#fff}.btn-g:hover{background:#15803d}
+.btn-sm{padding:5px 11px;font-size:0.74rem}
+.btn-wa{background:#25D366;color:#fff;width:100%;padding:12px;justify-content:center;font-size:.84rem}.btn-wa:hover{background:#1ebe5a}
+
+/* Form */
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:0.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--tmut);margin-bottom:5px}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 12px;background:var(--bg);border:1.5px solid var(--bgd);border-radius:4px;font-family:"DM Sans",sans-serif;font-size:.88rem;color:var(--tm);outline:none;transition:border-color var(--tr)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--tc);background:#fff}
+.form2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+
+/* Bill preview */
+.bill-preview{background:#fff;border:1px solid var(--bgd);border-radius:4px;padding:20px;font-size:.86rem;color:var(--tm);line-height:1.7}
+
+/* Order log item */
+.olog{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-bottom:1px solid var(--bgd)}
+.olog:last-child{border-bottom:none}
+.olog-t{width:40px;height:40px;border-radius:7px;background:var(--tc);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0}
+.olog-b{flex:1}
+.olog-b strong{font-size:.86rem;color:var(--br)}
+.olog-b p{font-size:.76rem;color:var(--tmut);margin-top:2px;line-height:1.5}
+.olog-m{font-size:.7rem;color:var(--tmut);text-align:right;white-space:nowrap}
+
+/* Menu rows */
+.mrow{display:flex;align-items:center;padding:9px 15px;border-bottom:1px solid var(--bgd);gap:10px}
+.mrow:last-child{border-bottom:none}
+.mrow-name{flex:1;font-size:.86rem;color:var(--tm)}
+.mrow-price{color:var(--tc);font-size:.83rem;min-width:50px;text-align:right}
+
+/* QR grid */
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.qr-card{background:var(--bg);border:1px solid var(--bgd);border-radius:6px;padding:12px;text-align:center}
+.qr-card strong{color:var(--br);font-size:.95rem;display:block;margin-bottom:6px}
+.qr-card p{font-size:.74rem;color:var(--tmut)}
+.qr-card a{font-size:.66rem;color:var(--tc);word-break:break-all;display:block;margin-top:3px}
+
+/* Config */
+.cfg-block{background:var(--bg);border:1px solid var(--bgd);border-radius:6px;padding:18px;margin-bottom:14px}
+.cfg-block h4{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);margin-bottom:12px}
+.cfg-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.cfg-row label{font-size:.8rem;color:var(--tm);min-width:140px}
+.cfg-row input{flex:1;padding:8px 11px;background:#fff;border:1.5px solid var(--bgd);border-radius:4px;font-size:.86rem;outline:none;transition:border-color var(--tr)}
+.cfg-row input:focus{border-color:var(--tc)}
+
+/* Toast */
+.toast{position:fixed;top:18px;right:18px;z-index:9999;background:var(--br);color:var(--bg);padding:11px 16px;border-radius:6px;border-left:4px solid var(--sage);font-size:.83rem;box-shadow:0 4px 20px rgba(0,0,0,.3);transform:translateX(120%);transition:transform .3s ease}
+.toast.show{transform:translateX(0)}
+.toast.err{border-left-color:var(--red)}
+
+/* Print */
+@media print{.sidebar,.sb-foot,button,.btn{display:none!important}.main{padding:0}.bill-preview{border:none;padding:0}}
+.bill-type-btn { padding:6px 12px; border-radius:16px; font-size:0.78rem; cursor:pointer; transition:all 0.2s; border:1.5px solid var(--tc) !important; color:var(--tc) !important; background:transparent !important; }
+.bill-type-btn.active { background:var(--tc) !important; color:#fff !important; }
+@media(max-width:720px){.sidebar{width:52px}.sb-logo h1,.sb-logo p,.sb-live,.sb-item span,.sb-section,.sb-foot a,.sb-foot button{display:none}.sb-item{justify-content:center;padding:11px}.page{padding:18px 14px}.form2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <h1>Café<br/><em style="color:var(--tcl);font-style:italic">Pibatie</em></h1>
+      <p>Owner Admin Panel</p>
+    </div>
+    <div class="login-field">
+      <label>Branch</label>
+      <select id="loginBranch" style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.12);border-radius:4px;color:var(--bg);font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border-color var(--tr);">
+        <option value="borivali">Borivali Branch</option>
+        <option value="andheri">Andheri Branch</option>
+      </select>
+    </div>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="admin" autocomplete="username"/>
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn-login" onclick="doLogin()">Sign In →</button>
+    <div class="login-error" id="loginError">Incorrect username or password.</div>
+    <p class="login-hint">Select your branch and login.<br/>Default: admin / pibatie2024</p>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="adminApp">
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <h1>Café<br/><em style="color:var(--tcl);font-style:italic">Pibatie</em></h1>
+      <p id="sbBranch">ADMIN PANEL</p>
+      <div class="sb-live">● Live</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Overview</div>
+      <div class="sb-item active" onclick="showPage('dashboard')"><span class="sb-icon">📊</span><span>Dashboard</span></div>
+      <div class="sb-section">Operations</div>
+      <div class="sb-item" onclick="showPage('orders')"><span class="sb-icon">🍽️</span><span>Orders</span></div>
+      <div class="sb-item" onclick="showPage('takeaway')"><span class="sb-icon">🛍️</span><span>Takeaway</span></div>
+      <div class="sb-item" onclick="showPage('reservations')"><span class="sb-icon">📅</span><span>Reservations</span></div>
+      <div class="sb-item" onclick="showPage('feedback')"><span class="sb-icon">⭐</span><span>Feedback</span></div>
+      <div class="sb-section">Menu & Tools</div>
+      <div class="sb-item" onclick="showPage('menu')"><span class="sb-icon">📋</span><span>Menu Items</span></div>
+      <div class="sb-item" onclick="showPage('bill')"><span class="sb-icon">🧾</span><span>Bill Generator</span></div>
+      <div class="sb-item" onclick="showPage('qr')"><span class="sb-icon">📱</span><span>QR Codes</span></div>
+      <div class="sb-section">Settings</div>
+      <div class="sb-item" onclick="showPage('settings')"><span class="sb-icon">⚙️</span><span>Settings</span></div>
+    </nav>
+    <div class="sb-foot">
+      <a href="cafe-pibatie.html" target="_blank">← Live Website</a>
+      <span id="sbUser" style="color:rgba(242,237,228,.4)"></span>
+      <button onclick="doLogout()">🔓 Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <h1 class="pg-title" id="dashGreeting">Good day, <em>Owner</em> 👋</h1>
+      <p class="pg-sub" id="dashDate">Café Pibatie — Overview</p>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-label">Orders Today</div><div class="stat-val" id="sd-orders">0</div><div class="stat-sub" id="sd-osub">No orders yet</div></div>
+        <div class="stat-card green"><div class="stat-label">Revenue Today</div><div class="stat-val" id="sd-rev">₹0</div><div class="stat-sub">Dine-in + Takeaway</div></div>
+        <div class="stat-card gold"><div class="stat-label">Takeaway Today</div><div class="stat-val" id="sd-tw">0</div><div class="stat-sub" id="sd-twsub">—</div></div>
+        <div class="stat-card dark"><div class="stat-label">Avg. Order</div><div class="stat-val" id="sd-avg">₹—</div><div class="stat-sub">Per table</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h3>Recent Orders</h3><button class="btn btn-o btn-sm" onclick="showPage('orders')">All Orders</button></div>
+        <div id="dashOrders"><div style="padding:28px;text-align:center;color:var(--tmut);font-size:.84rem;font-style:italic">No orders yet. Log them in Orders tab.</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h3>Quick Actions</h3></div>
+        <div class="card-body" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-p" onclick="showPage('orders');openAddOrder()">+ Log Order</button>
+          <button class="btn btn-o" onclick="showPage('takeaway');openAddTW()">+ Log Takeaway</button>
+          <button class="btn btn-o" onclick="showPage('reservations');openAddResv()">+ Add Reservation</button>
+          <button class="btn btn-o" onclick="showPage('bill')">🧾 Generate Bill</button>
+          <button class="btn btn-o" onclick="showPage('qr')">📱 QR Codes</button>
+          <a href="cafe-pibatie.html" target="_blank" class="btn btn-o">🌐 Live Site</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h3>Top Selling Items</h3></div>
+        <div id="dashTop" style="padding:18px"><p style="color:var(--tmut);font-size:.84rem;font-style:italic">Log orders to see top items.</p></div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="page" id="page-orders">
+      <h1 class="pg-title">Dine-in <em>Orders</em></h1>
+      <p class="pg-sub">Log table orders received via WhatsApp from the website.</p>
+      <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="openAddOrder()">+ Log Order</button>
+        <button class="btn btn-o btn-sm" onclick="exportOrdersCSV()">⬇ Export CSV</button>
+        <button class="btn btn-d btn-sm" onclick="clearData('orders')">🗑 Clear All</button>
+        <input id="ordSearch" placeholder="Search table, item…" oninput="renderOrders()"
+          style="flex:1;min-width:180px;padding:8px 12px;border:1.5px solid var(--bgd);border-radius:4px;font-size:.84rem;background:var(--bg);outline:none"/>
+      </div>
+      <div class="card" id="addOrdCard" style="display:none">
+        <div class="card-hd"><h3>Log New Order</h3><button class="btn btn-o btn-sm" onclick="closeAddOrder()">Cancel</button></div>
+        <div class="card-body">
+          <div class="form2">
+            <div class="fg"><label>Table *</label><input type="number" id="ao-table" min="1" max="99" placeholder="5"/></div>
+            <div class="fg"><label>Branch</label><select id="ao-branch"><option>Borivali West</option><option>Andheri West</option></select></div>
+          </div>
+          <div class="fg"><label>Items (scroll + click +)</label>
+            <div id="ao-list" style="border:1.5px solid var(--bgd);border-radius:4px;max-height:260px;overflow-y:auto;background:var(--bg)"></div>
+          </div>
+          <div class="fg"><label>Special Instructions</label><textarea id="ao-note" rows="2" placeholder="Jain, no onion…"></textarea></div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <span>Total: <strong id="ao-total" style="color:var(--tc);font-size:1rem">₹0</strong></span>
+            <button class="btn btn-p" onclick="saveOrder()">Save Order</button>
+            <button class="btn btn-g" onclick="sendOrderWA()">📲 Send on WhatsApp</button>
+            <button class="btn btn-o" onclick="openBillFromOrder()">🧾 Generate Bill</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h3>All Orders</h3><span id="ordCount" style="font-size:.76rem;color:var(--tmut)">0 orders</span></div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Time</th><th>Type</th><th>Table</th><th>Branch</th><th>Items</th><th>Total</th><th>Notes</th><th></th></tr></thead>
+            <tbody id="ordBody"><tr><td colspan="8" style="text-align:center;padding:22px;color:var(--tmut);font-style:italic">No orders yet.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAKEAWAY -->
+    <div class="page" id="page-takeaway">
+      <h1 class="pg-title">Takeaway <em>Orders</em></h1>
+      <p class="pg-sub">Log takeaway orders received via WhatsApp from the website.</p>
+      <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="openAddTW()">+ Log Takeaway</button>
+        <button class="btn btn-d btn-sm" onclick="clearData('takeaways')">🗑 Clear All</button>
+      </div>
+      <div class="card" id="addTWCard" style="display:none">
+        <div class="card-hd"><h3>Log Takeaway</h3><button class="btn btn-o btn-sm" onclick="closeAddTW()">Cancel</button></div>
+        <div class="card-body">
+          <div class="form2">
+            <div class="fg"><label>Customer Name *</label><input type="text" id="tw-name"/></div>
+            <div class="fg"><label>Phone *</label><input type="tel" id="tw-phone"/></div>
+            <div class="fg"><label>Branch</label><select id="tw-branch"><option>Borivali West</option><option>Andheri West</option></select></div>
+            <div class="fg"><label>Pickup Time</label><input type="time" id="tw-time"/></div>
+          </div>
+          <div class="fg"><label>Items</label><textarea id="tw-items" rows="3" placeholder="2× Cold Coffee, 1× Naanza…"></textarea></div>
+          <div class="fg"><label>Total Amount</label><input type="number" id="tw-total" placeholder="0"/></div>
+          <div class="fg"><label>Notes</label><textarea id="tw-note" rows="2" placeholder="Jain, no onion…"></textarea></div>
+          <button class="btn btn-p" onclick="saveTakeaway()">Save Takeaway</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h3>All Takeaway Orders</h3><span id="twCount" style="font-size:.76rem;color:var(--tmut)">0</span></div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Time</th><th>Name</th><th>Phone</th><th>Branch</th><th>Pickup</th><th>Items</th><th>Total</th><th></th></tr></thead>
+            <tbody id="twBody"><tr><td colspan="8" style="text-align:center;padding:22px;color:var(--tmut);font-style:italic">No takeaways yet.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESERVATIONS -->
+    <div class="page" id="page-reservations">
+      <h1 class="pg-title">Reservations</h1>
+      <p class="pg-sub">Track table bookings from WhatsApp requests.</p>
+      <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="openAddResv()">+ Add Reservation</button>
+        <button class="btn btn-d btn-sm" onclick="clearData('resvs')">🗑 Clear All</button>
+      </div>
+      <div class="card" id="addResvCard" style="display:none">
+        <div class="card-hd"><h3>Add Reservation</h3><button class="btn btn-o btn-sm" onclick="closeAddResv()">Cancel</button></div>
+        <div class="card-body">
+          <div class="form2">
+            <div class="fg"><label>Guest Name *</label><input type="text" id="rv-name"/></div>
+            <div class="fg"><label>Phone</label><input type="tel" id="rv-phone"/></div>
+            <div class="fg"><label>Date *</label><input type="date" id="rv-date"/></div>
+            <div class="fg"><label>Time *</label><input type="time" id="rv-time"/></div>
+            <div class="fg"><label>Guests</label><select id="rv-guests"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7+</option></select></div>
+            <div class="fg"><label>Branch</label><select id="rv-branch"><option>Borivali West</option><option>Andheri West</option></select></div>
+          </div>
+          <div class="fg"><label>Status</label><select id="rv-status"><option>Pending</option><option>Confirmed</option><option>Cancelled</option></select></div>
+          <div class="fg"><label>Notes</label><textarea id="rv-note" rows="2" placeholder="Birthday, window seat…"></textarea></div>
+          <button class="btn btn-p" onclick="saveResv()">Save Reservation</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h3>All Reservations</h3><span id="resvCount" style="font-size:.76rem;color:var(--tmut)">0</span></div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Time</th><th>Name</th><th>Phone</th><th>Guests</th><th>Branch</th><th>Status</th><th></th></tr></thead>
+            <tbody id="resvBody"><tr><td colspan="8" style="text-align:center;padding:22px;color:var(--tmut);font-style:italic">No reservations yet.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="page" id="page-feedback">
+      <h1 class="pg-title">Guest <em>Feedback</em></h1>
+      <p class="pg-sub">Reviews submitted via the website feedback form.</p>
+      <div style="margin-bottom:18px"><button class="btn btn-d btn-sm" onclick="clearData('feedbacks')">🗑 Clear All</button></div>
+      <div class="card">
+        <div class="card-hd"><h3>All Reviews</h3><span id="fbCount" style="font-size:.76rem;color:var(--tmut)">0</span></div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Name</th><th>Branch</th><th>Rating</th><th>Comment</th><th></th></tr></thead>
+            <tbody id="fbBody"><tr><td colspan="6" style="text-align:center;padding:22px;color:var(--tmut);font-style:italic">No feedback yet.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENU ITEMS -->
+    <div class="page" id="page-menu">
+      <h1 class="pg-title">Menu <em>Items</em></h1>
+      <p class="pg-sub">All items from the menu. 🌿 = non-Jain (contains onion/garlic/mushroom).</p>
+      <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+        <select id="menuCat" onchange="renderMenu()" style="padding:8px 12px;border:1.5px solid var(--bgd);border-radius:4px;font-size:.83rem;background:var(--bg);outline:none"><option value="">All Categories</option></select>
+        <input id="menuQ" placeholder="Search items…" oninput="renderMenu()" style="flex:1;min-width:160px;padding:8px 12px;border:1.5px solid var(--bgd);border-radius:4px;font-size:.83rem;outline:none;background:var(--bg)"/>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h3>All Items</h3><span id="menuCount" style="font-size:.76rem;color:var(--tmut)">0 items</span></div>
+        <div id="menuBody"></div>
+      </div>
+    </div>
+
+    <!-- BILL GENERATOR -->
+    <div class="page" id="page-bill">
+      <h1 class="pg-title">Bill <em>Generator</em></h1>
+      <p class="pg-sub">Build a custom bill, print it, or send to the customer via WhatsApp or SMS.</p>
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:18px;align-items:start">
+        <div>
+          <div class="card">
+            <div class="card-hd"><h3>Order Details</h3></div>
+            <div class="card-body">
+              <div class="form2" style="margin-bottom:10px">
+                <!-- Order Type -->
+                <div class="fg" style="margin:0;grid-column:1/-1">
+                  <label>Order Type</label>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <button class="btn btn-o btn-sm bill-type-btn active" id="btype-dine" onclick="setBillType('dine')">🪑 Dine-in</button>
+                    <button class="btn btn-o btn-sm bill-type-btn" id="btype-pickup" onclick="setBillType('pickup')">🛍️ Takeaway</button>
+                    <button class="btn btn-o btn-sm bill-type-btn" id="btype-online" onclick="setBillType('online')">📦 Delivery</button>
+                  </div>
+                </div>
+                <div class="fg" style="margin:0" id="bill-table-grp"><label>Table No.</label><input type="text" id="bill-table" placeholder="e.g. 5" oninput="renderBillPreview()"/></div>
+                <div class="fg" style="margin:0"><label>Customer Name</label><input type="text" id="bill-cname" placeholder="optional" oninput="renderBillPreview()"/></div>
+                <div class="fg" style="margin:0"><label>Customer Phone (for WhatsApp / SMS)</label><input type="tel" id="bill-cphone" placeholder="+91 98765 43210" oninput="renderBillPreview()"/></div>
+                <div class="fg" id="bill-addr-grp" style="margin:0;display:none"><label>Delivery Address</label><input type="text" id="bill-caddr" placeholder="Full address with landmark" oninput="renderBillPreview()"/></div>
+                <div class="fg" style="margin:0">
+                  <label>Branch</label>
+                  <select id="bill-branch" onchange="renderBillPreview()">
+                    <option value="Borivali West">Borivali West — Haridas Nagar</option>
+                    <option value="Andheri West">Andheri West — Oshiwara</option>
+                  </select>
+                </div>
+                <div class="fg" style="margin:0">
+                  <label>Discount (%)</label>
+                  <input type="number" id="bill-discount" value="0" min="0" max="100" placeholder="0" oninput="renderBillPreview()" style="width:90px"/>
+                </div>
+                <div class="fg" style="margin:0">
+                  <label>Payment Mode</label>
+                  <select id="bill-payment" onchange="renderBillPreview()">
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Card">Card</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+                <div class="fg" style="margin:0;grid-column:1/-1">
+                  <label>Notes / Special Instructions</label>
+                  <input type="text" id="bill-notes" placeholder="e.g. No onions, allergy info…" oninput="renderBillPreview()"/>
+                </div>
+              </div>
+              <div id="bill-items-list" style="border:1.5px solid var(--bgd);border-radius:4px;max-height:300px;overflow-y:auto;background:var(--bg)"></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="position:sticky;top:20px">
+            <div class="card-hd"><h3>Bill Preview</h3></div>
+            <div class="card-body">
+              <div class="bill-preview" id="billPreview"></div>
+              <div style="display:flex;gap:8px;margin-top:14px;flex-direction:column">
+                <button class="btn btn-wa" onclick="sendBillWA()" id="sendBillWABtn">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  Send Bill via WhatsApp
+                </button>
+                <button class="btn" style="background:#4CAF50;color:#fff;gap:6px;width:100%;justify-content:center" onclick="sendBillSMS()">
+                  💬 Send Bill via SMS
+                </button>
+                <button class="btn btn-p" onclick="printBill()" style="width:100%;justify-content:center">🖨️ Print Bill</button>
+                <button class="btn btn-o btn-sm" onclick="clearBillCart()" style="width:100%;justify-content:center">🗑 Clear Bill</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR CODES -->
+    <div class="page" id="page-qr">
+      <h1 class="pg-title">Table <em>QR Codes</em></h1>
+      <p class="pg-sub">Place QR codes on tables — scanning opens the order form pre-filled with the table number.</p>
+      <div class="card">
+        <div class="card-hd"><h3>Generate QR Codes</h3></div>
+        <div class="card-body">
+          <div class="form2" style="align-items:flex-end;gap:12px">
+            <div class="fg" style="margin:0"><label>Website URL</label><input type="text" id="qrUrl" value="cafe-pibatie.html" placeholder="https://yoursite.com/cafe-pibatie.html"/></div>
+            <div class="fg" style="margin:0"><label>Number of Tables</label><input type="number" id="qrCount" value="10" min="1" max="50" style="width:90px"/></div>
+          </div>
+          <p style="font-size:0.8rem;color:var(--tmut);margin:8px 0">QR codes will be generated for: <strong id="qrBranchDisplay">Borivali Branch</strong></p>
+          <button class="btn btn-p" onclick="genQR()" style="margin-top:12px">Generate QR Codes</button>
+        </div>
+      </div>
+      <div class="qr-grid" id="qrGrid"></div>
+      <div style="margin-top:14px;text-align:center"><button class="btn btn-o" onclick="window.print()">🖨️ Print All</button></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <h1 class="pg-title">Settings</h1>
+      <p class="pg-sub">Configure your café details and admin credentials.</p>
+      <div class="cfg-block">
+        <h4>WhatsApp & Google Review</h4>
+        <div class="cfg-row"><label>WhatsApp Number</label><input type="text" id="cfg-wa" placeholder="919326243023"/></div>
+        <div class="cfg-row"><label>Google Review URL</label><input type="text" id="cfg-gr" placeholder="https://g.page/r/…/review"/></div>
+        <button class="btn btn-p" style="margin-top:8px" onclick="saveSettings()">Save</button>
+      </div>
+      <div class="cfg-block">
+        <h4>Café Info</h4>
+        <div class="cfg-row"><label>Café Name</label><input type="text" id="cfg-name" value="Café Pibatie"/></div>
+        <div class="cfg-row"><label>Borivali Phone</label><input type="text" id="cfg-ph1" value="+91 79771 81838"/></div>
+        <div class="cfg-row"><label>Andheri Phone</label><input type="text" id="cfg-ph2" value="+91 93262 43023"/></div>
+        <div class="cfg-row"><label>Email</label><input type="text" id="cfg-email" value="hello@cafepibatie.com"/></div>
+        <button class="btn btn-p" style="margin-top:8px" onclick="saveCafeInfo()">Save</button>
+      </div>
+      <div class="cfg-block">
+        <h4>Current Admin Credentials</h4>
+        <div class="cfg-row"><label>Current Username</label><span id="currentUsername" style="padding:8px 11px;background:#fff;border:1.5px solid var(--bgd);border-radius:4px;font-size:.86rem;color:var(--tm)">Loading...</span></div>
+        <div class="cfg-row"><label>Current Branch</label><span id="currentBranchDisplay" style="padding:8px 11px;background:#fff;border:1.5px solid var(--bgd);border-radius:4px;font-size:.86rem;color:var(--tm)">Loading...</span></div>
+      </div>
+      <div class="cfg-block">
+        <h4>Change Admin Username</h4>
+        <div class="cfg-row"><label>Current Password</label><input type="password" id="cfg-unpw" placeholder="Current password"/></div>
+        <div class="cfg-row"><label>New Username</label><input type="text" id="cfg-newuser" placeholder="New username"/></div>
+        <div class="cfg-row"><label>Confirm</label><input type="text" id="cfg-cfuser" placeholder="Confirm new username"/></div>
+        <button class="btn btn-p" style="margin-top:8px" onclick="changeUsername()">Change Username</button>
+      </div>
+      <div class="cfg-block">
+        <h4>Change Admin Password</h4>
+        <div class="cfg-row"><label>Current Password</label><input type="password" id="cfg-oldpw" placeholder="Current password"/></div>
+        <div class="cfg-row"><label>New Password</label><input type="password" id="cfg-newpw" placeholder="New password (min 6 chars)"/></div>
+        <div class="cfg-row"><label>Confirm</label><input type="password" id="cfg-cfpw" placeholder="Confirm new password"/></div>
+        <button class="btn btn-p" style="margin-top:8px" onclick="changePassword()">Change Password</button>
+      </div>
+      <div class="cfg-block" style="border-left:3px solid var(--red)">
+        <h4 style="color:var(--red)">Danger Zone</h4>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+          <button class="btn btn-d btn-sm" onclick="clearData('orders');toast('Orders cleared','err')">Clear Orders</button>
+          <button class="btn btn-d btn-sm" onclick="clearData('resvs');toast('Reservations cleared','err')">Clear Reservations</button>
+          <button class="btn btn-d btn-sm" onclick="clearData('takeaways');toast('Takeaways cleared','err')">Clear Takeaways</button>
+          <button class="btn btn-d btn-sm" onclick="if(confirm('Reset everything?')){localStorage.clear();location.reload()}">Reset All Data</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+  const MENU_DATA = {
+    'Cold Coffee': [
+      {name:'Signature Cold Coffee', price:240, desc:'Our house special: rich, creamy, and perfectly balanced with a bold coffee kick.', jain:true},
+      {name:'Hazelnut Cold Coffee', price:265, desc:'Chilled coffee blended with smooth hazelnut flavor and creamy milk.', jain:true},
+      {name:'Salted Caramel Cold Coffee', price:265, desc:'Sweet meets salty in this indulgent blend of cold coffee, buttery caramel, and a hint of sea salt.', jain:true},
+      {name:'Irish Cold Coffee', price:265, desc:'Bold coffee blended with Irish cream flavor, ice, and milk.', jain:true},
+      {name:'Choco Chip Cold Coffee', price:265, desc:'Rich cold coffee blended with chocolate chips for a crunchy surprise.', jain:true},
+      {name:'Nutella Dalgona Frappe', price:265, desc:'Whipped frothy coffee blended with smooth Nutella and creamy milk.', jain:true},
+      {name:'Iced Americano', price:220, desc:'Double espresso poured over chilled water and ice. Clean and crisp.', jain:true},
+      {name:'Ginger Coffee Tonic', price:250, desc:'A zesty blend of espresso and ginger tonic water.', jain:true},
+      {name:'Orange Rosemary Coffee Tonic', price:250, desc:'Citrusy espresso meets aromatic rosemary and orange juice.', jain:true},
+      {name:'Passion Fruit Coffee Tonic', price:250, desc:'Fruity and bold espresso meets fizzy tonic and sweet-tart passion fruit.', jain:true},
+      {name:'Classic Iced Latte', price:250, desc:'Smooth espresso blended with cold milk and poured over ice.', jain:true},
+      {name:'Raspberry Iced Latte', price:265, desc:'A creamy iced latte with a fruity, sweet burst of raspberry.', jain:true},
+      {name:'Signature Tiramisu Cold Coffee', price:310, desc:'Iced latte with tiramisu flavors, cocoa, cream, and mascarpone; served with a ladyfinger.', jain:true},
+      {name:'Classic Cold Brew', price:250, desc:'Slow-steeped, bold, low-acidity, and ultra-refreshing.', jain:true},
+      {name:'Cranberry Cold Brew', price:265, desc:'A crisp, fruity twist on cold brew balanced with tart cranberry juice.', jain:true},
+      {name:'Vietnamese Cold Brew', price:265, desc:'Strong cold brew layered with sweetened condensed milk.', jain:true},
+      {name:'Coconut Crem Cold Brew', price:265, desc:'Cold brew coffee meets silky, tropical coconut cream.', jain:true},
+      {name:'Crem Cold Brew', price:265, desc:'Bold cold brew topped with velvety sweet cream.', jain:true},
+    ],
+    'Naanzas & Breads': [
+      {name:'Caramelized Mushroom & Onion', price:385, desc:'Earthy mushrooms, caramelized onions, melted cheese, and herbs on a crispy naan base.', jain:false},
+      {name:'Masala Tikka Naanza', price:385, desc:'A fusion favorite: spiced tikka chunks, zesty sauce, capsicum, onion, tomato, and melted cheese.', jain:false},
+      {name:'Thecha Pesto Naanza', price:385, desc:'Spicy green thecha, pesto paneer cubes, and melted cheese. A fiery, flavorful fusion.', jain:true},
+      {name:'Farm Special Naanza', price:385, desc:'A colorful medley of fresh bell peppers, onions, tomatoes, corn, and olives on a cheesy base.', jain:false},
+      {name:'Fiery Paneer Naanza', price:385, desc:'A spicy and creamy base topped with marinated paneer, fresh veggies, and chilies.', jain:false},
+      {name:'Hara Bhara Pesto Mini Slider', price:285, desc:'Grilled peas patty tossed in peri-peri sauce, layered with fresh lettuce and pesto cream in soft buns.', jain:false},
+      {name:'California Avocado Burger', price:310, desc:'Chef\'s special Mexican patty with avocado chutney, gherkins, tomato, caramelized onion, and hot sauce.', jain:false},
+      {name:'Mushroom & Cheese Sandwich', price:285, desc:'Sauteed mushrooms, mozzarella, tomato, and jalapeno in a flaky croissant.', jain:false},
+      {name:'Thecha Paneer Sandwich', price:285, desc:'Spicy green thecha with grilled paneer, onion, and cheese on toasted bread.', jain:false},
+      {name:'Tikka Paneer & Cheese Sandwich', price:285, desc:'Spicy tikka-marinated paneer, onions, and melted cheese on toasted bread.', jain:false},
+      {name:'Cheese Garlic Toast', price:250, desc:'Toasted bread with a savory mixture of butter, minced garlic, and herbs.', jain:false},
+      {name:'Cheese Chilli Toast', price:285, desc:'Melted cheese topped with spicy green chilli and fresh veggies.', jain:true},
+      {name:'Creamy Mushroom Toast', price:310, desc:'Sauteed mushrooms, tangy feta, and aromatic herbs on crispy bread.', jain:false},
+      {name:'Masala Avocado Toast', price:340, desc:'Smashed avocado with tomatoes, coriander, spices, and lemon-honey vinaigrette.', jain:false},
+      {name:'Sambar Spiced Paneer Toast', price:340, desc:'Fusion dish with spicy South Indian sambar flavors and creamy paneer.', jain:true},
+      {name:'Kolhapuri Paneer Toast', price:340, desc:'Bold, spicy Kolhapuri-style paneer served on toasted bread.', jain:true},
+      {name:'Butter Croissant', price:240, desc:'Flaky, buttery, and golden-brown crescent pastry.', jain:true},
+      {name:'Caprese Croissant', price:295, desc:'Fresh mozzarella, tomatoes, cucumber, lettuce, and balsamic glaze.', jain:true},
+      {name:'Shroom Cheese Croissant', price:310, desc:'Sauteed mushrooms in pepper butter, mozzarella, tomato, and jalapeno.', jain:false},
+      {name:'Ghee Roast Pesto Croissant', price:310, desc:'A flavorful blend of ghee-roasted spices and aromatic pesto sauce.', jain:false},
+      {name:'Spinach & Cheesy Herb Bake', price:310, desc:'Pesto cream cheese, mozzarella, herbs, blanched spinach, and sun-dried tomatoes.', jain:true},
+    ],
+    'Hindustani Kaffee': [
+      {name:'Sukku Kaffee', price:0, desc:'Espresso served with hot water infused with dry ginger. A soul-warming classic.', jain:true},
+      {name:'Adrabati', price:0, desc:'Espresso infused with ginger and jaggery in hot milk. A bold, traditional twist.', jain:true},
+      {name:'Gulbati', price:0, desc:'Milk-based coffee with a hint of rose and dry rose petals. Floral and romantic.', jain:true},
+      {name:'Tvakbati', price:0, desc:'Freshly brewed coffee with milk and comforting cinnamon flavor.', jain:true},
+      {name:'Cocobati', price:285, desc:'Freshly brewed espresso merged with coconut and hot milk. A tropical delight.', jain:true},
+      {name:'Shehalbati', price:0, desc:'Earthy turmeric and honey-sweetened coffee. The golden cup of wellness.', jain:true},
+      {name:'Thandai Ice Latte', price:265, desc:'Traditional Indian Thandai spices — almond, saffron, and pistachios — in a creamy iced latte.', jain:true},
+      {name:'Tropical Ice Chai', price:265, desc:'Spiced chai tea with bright, fruity tropical notes. A festive fusion sip.', jain:true},
+      {name:'Chai Kaffee', price:265, desc:'A harmonious blend of masala chai and robust coffee. The best of both worlds.', jain:true},
+      {name:'Espresso', price:139, desc:'Concentrated form of coffee, served in a 30ml shot.', jain:true},
+      {name:'Doppio', price:169, desc:'Concentrated form of coffee, served in a 60ml shot.', jain:true},
+      {name:'Affogato', price:240, desc:'A big scoop of vanilla ice cream with a hot espresso shot poured over it.', jain:true},
+      {name:'Macchiato', price:195, desc:'Espresso coffee with a dash of frothy steamed milk.', jain:true},
+      {name:'Black Coffee', price:0, desc:'Brewed coffee served without sugar or milk.', jain:true},
+      {name:'Cappuccino', price:0, desc:'The perfect balance of espresso, steamed milk, and foam.', jain:true},
+      {name:'Cafe Latte', price:0, desc:'A shot of bold espresso with fresh, sweet steamed milk.', jain:true},
+      {name:'Flat White', price:0, desc:'Micro-foamed milk poured over a single shot of espresso.', jain:true},
+      {name:'Flavored Latte', price:0, desc:'Choice of Hazelnut, Irish, or French Vanilla.', jain:true},
+      {name:'French Press', price:265, desc:'A manual brewing device renowned for rich, full-bodied coffee.', jain:true},
+      {name:'Pour Over', price:285, desc:'A manual brewing method resulting in a clean, flavorful, and aromatic cup.', jain:true},
+      {name:'Elaichi Chai', price:240, desc:'Hot, aromatic, and soul-soothing Indian classic.', jain:true},
+      {name:'Adrak Wali Chai', price:240, desc:'Infused with fresh ginger for a bold, refreshing spice.', jain:true},
+      {name:'Masala Chai', price:240, desc:'Black tea brewed with a special blend of fragrant spices and milk.', jain:true},
+      {name:'Gulab Chai', price:240, desc:'Traditional spiced chai with a fragrant, floral twist of rose petals.', jain:true},
+    ],
+    'Desserts': [
+      {name:'Classic Brownie w/ Ice Cream', price:310, desc:'Rich cocoa brownie topped with a scoop of vanilla ice cream.', jain:true},
+      {name:'Classic NY Cheesecake', price:310, desc:'Dense, velvety smooth cheesecake on a classic graham cracker crust.', jain:true},
+      {name:'Nutella Cheesecake', price:355, desc:'Creamy cheesecake swirled with Nutella on a chocolate cookie crust.', jain:true},
+      {name:'Lotus Biscoff Cheesecake', price:355, desc:'Spiced Biscoff biscuit crust topped with a smooth, caramelized Biscoff glaze.', jain:true},
+      {name:'Nutella Almond Croissant', price:355, desc:'Flaky buttery croissant filled with Nutella, toasted almonds, and powdered sugar.', jain:true},
+      {name:'Choklad Pull Me', price:355, desc:'Chocolate sponge cake layered with rich dark and milk chocolate.', jain:true},
+      {name:'Matcha Honey Latte', price:240, desc:'Earthy matcha with creamy milk and honey. Smooth and lightly sweet.', jain:true},
+      {name:'Mango Matcha', price:265, desc:'Vibrant matcha blended with tropical mango puree and milk.', jain:true},
+      {name:'Coconut Crem Matcha', price:265, desc:'Fresh coconut water meets bold matcha. Light, tropical, and smooth.', jain:true},
+      {name:'Raspberry Iced Matcha', price:265, desc:'Earthy matcha blended with creamy milk and a sweet raspberry twist.', jain:true},
+      {name:'Turkish Delight Matcha', price:265, desc:'Unique fusion of floral rose, subtle sweetness, and ceremonial matcha.', jain:true},
+      {name:'Toffee Apple Frappe', price:265, desc:'Cool blend of sweet toffee and crisp green apple flavors.', jain:true},
+      {name:'Chocolate Orange Frappe', price:265, desc:'Zesty orange meets rich chocolate. Bold and citrusy-sweet.', jain:true},
+      {name:'Bloody Cherry Frappe', price:265, desc:'Dark cherry and chocolate collide in this dramatic, dessert-style frappe.', jain:true},
+      {name:'Freaky Oreo Frappe', price:265, desc:'A wild Oreo explosion with crushed cookies and chocolate sauce.', jain:true},
+      {name:'Mint Choco Chip Frappe', price:265, desc:'Cool mint and chocolate chips blended into a frosty, sip-able ice cream.', jain:true},
+    ],
+  };
+
+/* =============== STATE =============== */
+const ADMIN_USER_KEY = 'pibatie_admin_user';
+const ADMIN_PASS_KEY = 'pibatie_admin_pass';
+const SESSION_KEY    = 'pibatie_session';
+let currentBranch    = '';
+
+function ld(k,d){ try{return JSON.parse(localStorage.getItem('adm_'+currentBranch+'_'+k))??d}catch{return d} }
+function sv(k,v){ try{localStorage.setItem('adm_'+currentBranch+'_'+k,JSON.stringify(v))}catch{} }
+
+let orders    = ld('orders',[]);
+let takeaways = ld('takeaways',[]);
+let resvs     = ld('resvs',[]);
+let feedbacks = ld('feedbacks',[]);
+let cfg       = ld('cfg',{wa:'919326243023',gr:'',name:'Café Pibatie',ph1:'+91 79771 81838',ph2:'+91 93262 43023',email:'hello@cafepibatie.com'});
+
+// Bill builder cart
+let billCart = {};
+
+/* =============== AUTH =============== */
+function setSession(){
+  // Persist login across refresh with expiry (8 hours)
+  const exp = Date.now() + 8*60*60*1000;
+  localStorage.setItem(SESSION_KEY, JSON.stringify({v:1, exp, branch: currentBranch}));
+}
+function hasValidSession(){
+  try{
+    const s = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if(!s || s.v!==1) return false;
+    if(Date.now() > (s.exp||0)){ localStorage.removeItem(SESSION_KEY); return false; }
+    if(s.branch) currentBranch = s.branch;
+    return true;
+  }catch{ return false; }
+}
+
+function getBranchKey(key){
+  return key + (currentBranch ? '_'+currentBranch : '');
+}
+function getStoredAdminUser(branch){
+  const branchKey = ADMIN_USER_KEY + (branch? '_'+branch : '');
+  return localStorage.getItem(branchKey) || localStorage.getItem(ADMIN_USER_KEY) || 'admin';
+}
+function getStoredAdminPass(branch){
+  const branchKey = ADMIN_PASS_KEY + (branch? '_'+branch : '');
+  return localStorage.getItem(branchKey) || localStorage.getItem(ADMIN_PASS_KEY) || 'pibatie2024';
+}
+
+function doLogin(){
+  const branch = document.getElementById('loginBranch').value;
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const storedUser = getStoredAdminUser(branch);
+  const storedPass = getStoredAdminPass(branch);
+  const errEl = document.getElementById('loginError');
+  if(user===storedUser && pass===storedPass){
+    currentBranch = branch;
+    setSession();
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminApp').style.display='block';
+    document.getElementById('sbUser').textContent='👤 '+user+' ('+branch.charAt(0).toUpperCase()+branch.slice(1)+')';
+    document.getElementById('sbBranch').textContent=branch.charAt(0).toUpperCase()+branch.slice(1)+' BRANCH';
+    errEl.style.display='none';
+    updateDashboard();
+    loadSettings();
+  } else {
+    errEl.style.display='block';
+    document.getElementById('loginPass').value='';
+  }
+}
+
+function changeUsername(){
+  const pw=document.getElementById('cfg-unpw').value;
+  const nw=document.getElementById('cfg-newuser').value.trim();
+  const cf=document.getElementById('cfg-cfuser').value.trim();
+  const storedPass=getStoredAdminPass(currentBranch);
+  if(pw!==storedPass){toast('Current password incorrect','err');return}
+  if(!nw){toast('Enter a new username','err');return}
+  if(nw!==cf){toast('Usernames do not match','err');return}
+  localStorage.setItem(ADMIN_USER_KEY + (currentBranch? '_'+currentBranch : ''), nw);
+  ['cfg-unpw','cfg-newuser','cfg-cfuser'].forEach(id=>{document.getElementById(id).value=''});
+  document.getElementById('sbUser').textContent='👤 '+nw+' ('+currentBranch.charAt(0).toUpperCase()+currentBranch.slice(1)+')';
+  document.getElementById('currentUsername').textContent = nw;
+  toast('Username updated for '+(currentBranch?currentBranch.charAt(0).toUpperCase()+currentBranch.slice(1)+' branch':'default')+'!');
+}
+
+document.getElementById('loginPass')?.addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('loginUser')?.addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('loginPass').focus(); });
+
+const loginBranchSelect = document.getElementById('loginBranch');
+if(loginBranchSelect){
+  loginBranchSelect.addEventListener('change', ()=>{
+    const b = loginBranchSelect.value;
+    const u = getStoredAdminUser(b);
+    const input = document.getElementById('loginUser');
+    if(input){
+      input.value = '';
+      input.placeholder = 'Username ('+u+')';
+    }
+  });
+  loginBranchSelect.dispatchEvent(new Event('change'));
+}
+
+function doLogout(){
+  if(!confirm('Log out?')) return;
+  localStorage.removeItem(SESSION_KEY);
+  currentBranch = '';
+  document.getElementById('adminApp').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('loginPass').value='';
+  document.getElementById('sbBranch').textContent='ADMIN PANEL';
+}
+
+function changePassword(){
+  const old=document.getElementById('cfg-oldpw').value;
+  const nw=document.getElementById('cfg-newpw').value;
+  const cf=document.getElementById('cfg-cfpw').value;
+  const storedPass=getStoredAdminPass(currentBranch);
+  if(old!==storedPass){toast('Current password incorrect','err');return}
+  if(nw.length<6){toast('Password must be at least 6 characters','err');return}
+  if(nw!==cf){toast('Passwords do not match','err');return}
+  localStorage.setItem(ADMIN_PASS_KEY + (currentBranch? '_'+currentBranch : ''), nw);
+  ['cfg-oldpw','cfg-newpw','cfg-cfpw'].forEach(id=>{document.getElementById(id).value=''});
+  toast('Password changed for '+(currentBranch?currentBranch.charAt(0).toUpperCase()+currentBranch.slice(1)+' branch':'default')+'!');
+}
+
+// Check session on load
+window.addEventListener('DOMContentLoaded',()=>{
+  if(hasValidSession()){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminApp').style.display='block';
+    const u=getStoredAdminUser(currentBranch);
+    const branchDisplay = currentBranch ? ' ('+currentBranch.charAt(0).toUpperCase()+currentBranch.slice(1)+')' : '';
+    document.getElementById('sbUser').textContent='👤 '+u+branchDisplay;
+    document.getElementById('sbBranch').textContent=currentBranch ? currentBranch.charAt(0).toUpperCase()+currentBranch.slice(1)+' BRANCH' : 'ADMIN PANEL';
+    updateDashboard();
+    loadSettings();
+  }
+  buildMenuCats();
+  renderMenu();
+  buildBillItemList();
+  setBillType('dine');
+  renderBillPreview();
+  // Performance: lazy-load images by default
+  document.querySelectorAll('img').forEach(function(img){
+    if(!img.getAttribute('loading')) img.setAttribute('loading','lazy');
+    if(!img.getAttribute('decoding')) img.setAttribute('decoding','async');
+  });
+});
+
+/* =============== NAV =============== */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(n=>{
+    if(n.getAttribute('onclick')?.includes("'"+id+"'")) n.classList.add('active');
+  });
+  if(id==='dashboard')   updateDashboard();
+  if(id==='orders')      renderOrders();
+  if(id==='takeaway')    renderTakeaways();
+  if(id==='reservations')renderResvs();
+  if(id==='feedback')    renderFeedback();
+  if(id==='settings')    loadSettings();
+  if(id==='bill')        { buildBillItemList(); updateBillPreview(); }
+  if(id==='qr')          { document.getElementById('qrBranchDisplay').textContent = currentBranch ? currentBranch.charAt(0).toUpperCase()+currentBranch.slice(1)+' Branch' : 'Please log in to a branch'; }
+}
+
+/* =============== TOAST =============== */
+function toast(msg,type){
+  const el=document.getElementById('toastEl');
+  el.textContent=msg;
+  el.className='toast'+(type==='err'?' err':'')+' show';
+  setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+/* =============== DASHBOARD =============== */
+function updateDashboard(){
+  const today=new Date().toDateString();
+  const tod=orders.filter(o=>new Date(o.ts).toDateString()===today);
+  const twtod=takeaways.filter(o=>new Date(o.ts).toDateString()===today);
+  const rev=tod.reduce((s,o)=>s+(o.total||0),0)+twtod.reduce((s,o)=>s+(parseInt(o.total)||0),0);
+  const avg=tod.length?Math.round(rev/tod.length):0;
+  document.getElementById('sd-orders').textContent=tod.length;
+  document.getElementById('sd-rev').textContent='₹'+rev;
+  document.getElementById('sd-tw').textContent=twtod.length;
+  document.getElementById('sd-avg').textContent=tod.length?'₹'+avg:'₹—';
+  const h=new Date().getHours();
+  const gr=h<12?'morning':h<17?'afternoon':'evening';
+  const branchTitle = currentBranch ? ' — '+currentBranch.charAt(0).toUpperCase()+currentBranch.slice(1)+' Branch' : '';
+  document.getElementById('dashGreeting').innerHTML='Good '+gr+', <em>Owner</em> 👋';
+  document.getElementById('dashDate').textContent='Café Pibatie'+branchTitle+' · '+new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+  // Recent
+  const rec=[...orders].reverse().slice(0,5);
+  const el=document.getElementById('dashOrders');
+    el.innerHTML=rec.length?rec.map(function(o){
+    return '<div class="olog"><div class="olog-t">T'+(o.table||'?')+'</div><div class="olog-b"><strong>'+(o.branch||'Pibatie')+' - Table '+(o.table||'?')+'</strong><p>'+(o.items||[]).slice(0,3).map(function(i){return i.qty+'x '+i.name}).join(', ')+'</p></div><div class="olog-m"><span class="badge bg-green">&#8377;'+(o.total||0)+'</span><br/><span style="font-size:.68rem;margin-top:3px;display:block">'+fmtTime(o.ts)+'</span></div></div>';
+  }).join('') : '<div style="padding:24px;text-align:center;color:var(--tmut);font-size:.84rem;font-style:italic">No orders today.</div>';
+  // Top items
+  const ic={};
+  orders.forEach(o=>(o.items||[]).forEach(i=>{if(!ic[i.name])ic[i.name]={q:0,r:0};ic[i.name].q+=i.qty;ic[i.name].r+=i.qty*i.price}));
+  const top=Object.entries(ic).sort((a,b)=>b[1].q-a[1].q).slice(0,5);
+  document.getElementById('dashTop').innerHTML=top.length?
+    '<table class="tbl"><thead><tr><th>Item</th><th>Qty Sold</th><th>Revenue</th></tr></thead><tbody>'+top.map(([n,d])=>'<tr><td>'+escH(n)+'</td><td>'+d.q+'</td><td>₹'+d.r+'</td></tr>').join('')+'</tbody></table>'
+    :'<p style="color:var(--tmut);font-size:.84rem;font-style:italic;padding:8px">Log orders to see top items.</p>';
+}
+
+/* =============== ORDERS =============== */
+let aoCart={};
+function openAddOrder(){
+  document.getElementById('addOrdCard').style.display='';
+  aoCart={};
+  buildAoList();
+  document.getElementById('addOrdCard').scrollIntoView({behavior:'smooth'});
+}
+function closeAddOrder(){document.getElementById('addOrdCard').style.display='none'}
+
+function buildAoList(){
+  const el=document.getElementById('ao-list');
+  if(!el)return;
+  let h='';
+  Object.entries(MENU_DATA).forEach(([cat,items])=>{
+    h+='<div style="padding:7px 13px;background:var(--bgd);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">'+escH(cat)+'</div>';
+    items.forEach(item=>{
+      const sid='ao_'+item.name.replace(/[^a-z0-9]/gi,'_');
+      const safeName=item.name.replace(/"/g,'&quot;');
+      h+='<div style="display:flex;align-items:center;padding:8px 13px;border-bottom:1px solid var(--bgd);gap:9px" data-sid="'+sid+'" data-name="'+safeName+'" data-price="'+item.price+'">'+
+        '<div style="flex:1;font-size:.83rem;color:var(--tm)">'+escH(item.name)+'</div>'+
+        '<span style="color:var(--tc);font-size:.8rem;min-width:44px;text-align:right">&#8377;'+item.price+'</span>'+
+        '<div style="display:flex;align-items:center;gap:5px">'+
+          '<button data-dir="-1" style="width:24px;height:24px;border-radius:50%;border:1.5px solid var(--bgd);background:#fff;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;color:var(--tmut)">&#8722;</button>'+
+          '<span id="aqty_'+sid+'" style="width:18px;text-align:center;font-size:.88rem;font-weight:600;color:var(--br)">0</span>'+
+          '<button data-dir="1" style="width:24px;height:24px;border-radius:50%;background:var(--tc);border:none;cursor:pointer;font-size:.95rem;color:#fff;display:flex;align-items:center;justify-content:center">+</button>'+
+        '</div></div>';
+    });
+  });
+  el.innerHTML=h;
+  el.addEventListener('click',function(e){
+    const btn=e.target.closest('[data-dir]');
+    if(!btn)return;
+    const row=btn.closest('[data-sid]');
+    if(!row)return;
+    aoC(row.dataset.sid, row.dataset.name, parseInt(row.dataset.price), parseInt(btn.dataset.dir));
+  });
+}
+
+function aoC(sid,name,price,d){
+  if(!aoCart[name])aoCart[name]={price,qty:0};
+  aoCart[name].qty=Math.max(0,aoCart[name].qty+d);
+  if(aoCart[name].qty===0)delete aoCart[name];
+  const el=document.getElementById('aqty_'+sid);
+  if(el)el.textContent=aoCart[name]?.qty||0;
+  const tot=Object.entries(aoCart).reduce((s,[,v])=>s+v.price*v.qty,0);
+  document.getElementById('ao-total').textContent='₹'+tot;
+}
+
+function saveOrder(){
+  var table=document.getElementById('ao-table')?.value.trim();
+  if(!table){toast('Enter table number','err');return}
+  var items=Object.entries(aoCart);
+  if(!items.length){toast('Add at least one item','err');return}
+  var total=items.reduce(function(s,e){return s+e[1].price*e[1].qty},0);
+  var branch=document.getElementById('ao-branch')?.value||'';
+  var notes=document.getElementById('ao-note')?.value.trim()||'';
+  var o={id:Date.now(),ts:new Date().toISOString(),table:table,branch:branch,items:items.map(function(e){return{name:e[0],price:e[1].price,qty:e[1].qty}}),total:total,notes:notes};
+  orders.push(o);sv('orders',orders);
+  closeAddOrder();renderOrders();updateDashboard();
+  toast('Order saved! Table '+table+' - Rs.'+total);
+}
+
+function sendOrderWA(){
+  var table=document.getElementById('ao-table')?.value.trim()||'?';
+  var items=Object.entries(aoCart);
+  if(!items.length){toast('Add items first','err');return}
+  var total=items.reduce(function(s,e){return s+e[1].price*e[1].qty},0);
+  var lines2=items.map(function(e){return '  '+e[1].qty+'x '+e[0]+'  -  Rs.'+(e[1].price*e[1].qty)}).join('\n');
+  var note=document.getElementById('ao-note')?.value.trim()||'';
+  var msg='NEW ORDER - Cafe Pibatie\n'
+    +'===========================\n'
+    +'Table: '+table+'\n\n'
+    +'ITEMS:\n'+lines2+'\n\n'
+    +'===========================\n'
+    +'TOTAL: Rs.'+total
+    +(note?'\nNotes: '+note:'')+'\n_From Admin Panel_';
+  window.open('https://wa.me/'+cfg.wa+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+function openBillFromOrder(){
+  const items=Object.entries(aoCart);
+  if(!items.length){toast('Add items to the order first','err');return}
+  billCart={};
+  items.forEach(([n,{price,qty}])=>{billCart[n]={price,qty}});
+  document.getElementById('bill-table').value=document.getElementById('ao-table')?.value||'';
+  showPage('bill');
+  buildBillItemList();
+  updateBillPreview();
+}
+
+function renderOrders(){
+  const q=(document.getElementById('ordSearch')?.value||'').toLowerCase();
+  let list=[...orders].filter(o=>!q||String(o.table).includes(q)||(o.branch||'').toLowerCase().includes(q)||(o.items||[]).some(i=>i.name.toLowerCase().includes(q)));
+  list=list.reverse();
+  document.getElementById('ordCount').textContent=list.length+' orders';
+  const b=document.getElementById('ordBody');
+  const typeLbl = t => t==='pickup'?'Takeaway':t==='online'?'Delivery':'Dine-in';
+  const typeBadge = t => t==='pickup'?'bg-gold':t==='online'?'bg-grey':'bg-green';
+  b.innerHTML=list.length?list.map(o=>{
+      const t = o.orderType || o.type || 'dine';
+      return '<tr>'
+        +'<td style="white-space:nowrap">'+fmtTime(o.ts)+'</td>'
+        +'<td><span class="badge '+typeBadge(t)+'">'+typeLbl(t)+'</span></td>'
+        +'<td><strong style="color:var(--tc)">'+(t==='dine'?'T'+(o.table||'?'):(o.table?('T'+o.table):'—'))+'</strong></td>'
+        +'<td>'+escH(o.branch||'—')+'</td>'
+        +'<td style="max-width:200px;font-size:.78rem">'+(o.items||[]).map(i=>i.qty+'× '+escH(i.name)).join('<br/>')+'</td>'
+        +'<td><span class="badge bg-green">₹'+(o.total||0)+'</span></td>'
+        +'<td style="max-width:120px;font-size:.76rem;color:var(--tmut)">'+escH(o.notes||'—')+'</td>'
+        +'<td style="white-space:nowrap;display:flex;gap:8px;justify-content:flex-end">'
+          +'<button class="btn btn-o btn-sm" onclick="printOrderBill('+o.id+')">🖨️ Print</button>'
+          +'<button class="btn btn-d btn-sm" onclick="delOrder('+o.id+')">✕</button>'
+        +'</td>'
+      +'</tr>';
+    }).join('')
+    :'<tr><td colspan="8" style="text-align:center;padding:22px;color:var(--tmut);font-style:italic">No orders yet.</td></tr>';
+}
+
+function delOrder(id){orders=orders.filter(o=>o.id!==id);sv('orders',orders);renderOrders();updateDashboard()}
+
+function exportOrdersCSV(){
+  const rows = [['Time','Order Type','Table','Branch','Items','Total','Notes']];
+  const typeLbl = t => t==='pickup'?'Takeaway':t==='online'?'Delivery':'Dine-in';
+  orders.forEach(o=>{
+    const t = o.orderType || o.type || 'dine';
+    const items = (o.items||[]).map(i=>`${i.qty}x ${i.name} (₹${(i.price||0)*i.qty})`).join(' | ');
+    rows.push([
+      new Date(o.ts||Date.now()).toLocaleString('en-IN'),
+      typeLbl(t),
+      o.table || '',
+      o.branch || '',
+      items,
+      o.total || 0,
+      o.notes || ''
+    ]);
+  });
+  const csv = rows.map(r=>r.map(v=>('"'+String(v).replace(/"/g,'""')+'"')).join(',')).join('\r\n');
+  const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'cafe-pibatie-orders.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast('CSV exported!');
+}
+
+function printOrderBill(id){
+  var o = orders.find(function(x){return x.id===id});
+  if(!o){ toast('Order not found','err'); return; }
+  var t = o.orderType || o.type || 'dine';
+  var typeLabel = t==='pickup'?'Takeaway':t==='online'?'Delivery':'Dine-in';
+  var now = new Date(o.ts||Date.now()).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});
+  var subtotal = 0;
+  var rows = (o.items||[]).map(function(i){
+    var sub = (i.price||0)*(i.qty||0); subtotal+=sub;
+    return '<tr><td>'+escH(i.name)+'</td><td style="text-align:center">'+(i.qty||0)+'</td><td style="text-align:right">&#8377;'+(i.price||0)+'</td><td style="text-align:right">&#8377;'+sub+'</td></tr>';
+  }).join('');
+  var sgst = Math.round(subtotal*0.025);
+  var cgst = Math.round(subtotal*0.025);
+  var grand = subtotal+sgst+cgst;
+  var tableHtml = o.table ? '<p>Table: <b>'+escH(o.table)+'</b></p>' : '';
+  var guestHtml = o.cname ? '<p>Guest: '+escH(o.cname)+'</p>' : '';
+
+  var billHtml = '<!DOCTYPE html><html><head><title>Order Bill - Cafe Pibatie</title>'
+    +'<meta charset="UTF-8"/>'
+    +'<style>'
+    +'*{margin:0;padding:0;box-sizing:border-box}'
+    +'body{font-family:"Courier New",monospace;padding:16px;max-width:320px;margin:0 auto;font-size:12px;color:#222}'
+    +'h2{text-align:center;font-size:1.3rem;font-family:Georgia,serif;margin-bottom:2px}'
+    +'.sub{text-align:center;font-size:11px;color:#555;margin-bottom:8px}'
+    +'.divider{border-top:1px dashed #888;margin:8px 0}'
+    +'table{width:100%;border-collapse:collapse;font-size:11.5px}'
+    +'thead tr{border-bottom:1px solid #333}'
+    +'th{text-align:left;padding:3px 2px}'
+    +'td{padding:3px 2px;vertical-align:top}'
+    +'.total-row{font-weight:bold;font-size:12.5px}'
+    +'.footer{text-align:center;font-size:10.5px;color:#555;margin-top:10px}'
+    +'@media print{body{padding:0}}'
+    +'<\/style><\/head><body>'
+    +'<h2>'+escH(cfg.name||'Cafe Pibatie')+'<\/h2>'
+    +'<div class="sub">'+escH(o.branch||'')+'<br>'+escH(now)+' &middot; '+escH(typeLabel)+'<\/div>'
+    +'<div class="divider"><\/div>'
+    +tableHtml+guestHtml
+    +'<div class="divider"><\/div>'
+    +'<table><thead><tr><th>Item<\/th><th>Qty<\/th><th style="text-align:right">Rate<\/th><th style="text-align:right">Amt<\/th><\/tr><\/thead><tbody>'+rows+'<\/tbody><\/table>'
+    +'<div class="divider"><\/div>'
+    +'<table>'
+    +'<tr><td colspan="3">Subtotal<\/td><td style="text-align:right">&#8377;'+subtotal+'<\/td><\/tr>'
+    +'<tr><td colspan="3">SGST (2.5%)<\/td><td style="text-align:right">&#8377;'+sgst+'<\/td><\/tr>'
+    +'<tr><td colspan="3">CGST (2.5%)<\/td><td style="text-align:right">&#8377;'+cgst+'<\/td><\/tr>'
+    +'<tr class="total-row"><td colspan="3">TOTAL<\/td><td style="text-align:right">&#8377;'+grand+'<\/td><\/tr>'
+    +'<\/table>'
+    +'<div class="footer">Thank you for visiting Cafe Pibatie!<br>'+(cfg.ph1||'+91 79771 81838')+' &middot; '+(cfg.ph2||'+91 93262 43023')+'<br>@cafepibatie<\/div>'
+    +'<scr'+'ipt>window.onload=function(){window.print()}<\/sc'+'ript><\/body><\/html>';
+
+  var win = window.open('','_blank','width=420,height=720');
+  if(win){ win.document.write(billHtml); win.document.close(); }
+  else { toast('Allow popups to print bill','err'); }
+}
+
+/* =============== TAKEAWAY =============== */
+function openAddTW(){document.getElementById('addTWCard').style.display='';document.getElementById('addTWCard').scrollIntoView({behavior:'smooth'})}
+function closeAddTW(){document.getElementById('addTWCard').style.display='none'}
+
+function saveTakeaway(){
+  const name=document.getElementById('tw-name')?.value.trim();
+  const phone=document.getElementById('tw-phone')?.value.trim();
+  if(!name){toast('Enter customer name','err');return}
+  const tw={id:Date.now(),ts:new Date().toISOString(),name,phone,branch:document.getElementById('tw-branch')?.value,time:document.getElementById('tw-time')?.value,items:document.getElementById('tw-items')?.value.trim()||'',total:parseInt(document.getElementById('tw-total')?.value)||0,notes:document.getElementById('tw-note')?.value.trim()||''};
+  takeaways.push(tw);sv('takeaways',takeaways);
+  closeAddTW();renderTakeaways();updateDashboard();
+  toast('Takeaway saved for '+name);
+  ['tw-name','tw-phone','tw-time','tw-items','tw-total','tw-note'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+}
+
+function renderTakeaways(){
+  const b=document.getElementById('twBody');
+  const list=[...takeaways].reverse();
+  document.getElementById('twCount').textContent=list.length;
+  b.innerHTML=list.length?list.map(o=>'<tr><td style="white-space:nowrap">'+fmtTime(o.ts)+'</td><td><strong>'+escH(o.name||'—')+'</strong></td><td>'+escH(o.phone||'—')+'</td><td>'+escH(o.branch||'—')+'</td><td>'+escH(o.time||'—')+'</td><td style="max-width:180px;font-size:.78rem">'+escH(o.items||'—')+'</td><td><span class="badge bg-green">₹'+(o.total||0)+'</span></td><td><button class="btn btn-d btn-sm" onclick="delTW('+o.id+')">✕</button></td></tr>').join('')
+    :'<tr><td colspan="8" style="text-align:center;padding:22px;color:var(--tmut);font-style:italic">No takeaway orders yet.</td></tr>';
+}
+function delTW(id){takeaways=takeaways.filter(o=>o.id!==id);sv('takeaways',takeaways);renderTakeaways();updateDashboard()}
+
+/* =============== RESERVATIONS =============== */
+function openAddResv(){document.getElementById('addResvCard').style.display='';document.getElementById('rv-date').value=new Date().toISOString().split('T')[0];document.getElementById('addResvCard').scrollIntoView({behavior:'smooth'})}
+function closeAddResv(){document.getElementById('addResvCard').style.display='none'}
+
+function saveResv(){
+  const name=document.getElementById('rv-name')?.value.trim();
+  const date=document.getElementById('rv-date')?.value;
+  const time=document.getElementById('rv-time')?.value;
+  if(!name||!date||!time){toast('Fill Name, Date and Time','err');return}
+  const r={id:Date.now(),ts:new Date().toISOString(),name,date,time,phone:document.getElementById('rv-phone')?.value.trim()||'',guests:document.getElementById('rv-guests')?.value||'2',branch:document.getElementById('rv-branch')?.value,status:document.getElementById('rv-status')?.value||'Pending',notes:document.getElementById('rv-note')?.value.trim()||''};
+  resvs.push(r);sv('resvs',resvs);closeAddResv();renderResvs();toast('Reservation saved for '+name);
+  ['rv-name','rv-phone','rv-note'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+}
+
+function renderResvs(){
+  const b=document.getElementById('resvBody');
+  const list=[...resvs].sort((a,b)=>new Date(a.date+' '+a.time)-new Date(b.date+' '+b.time));
+  document.getElementById('resvCount').textContent=list.length;
+  const sc=s=>s==='Confirmed'?'bg-green':s==='Cancelled'?'bg-red':'bg-gold';
+  b.innerHTML=list.length?list.map(r=>'<tr><td style="white-space:nowrap">'+fmtDate(r.date)+'</td><td>'+escH(r.time||'—')+'</td><td><strong>'+escH(r.name)+'</strong></td><td>'+escH(r.phone||'—')+'</td><td>'+escH(r.guests||'—')+'</td><td>'+escH(r.branch||'—')+'</td><td><select class="badge '+sc(r.status)+'" onchange="updResv('+r.id+',this.value)" style="border:none;background:transparent;cursor:pointer;font-size:.68rem;color:inherit">'+['Pending','Confirmed','Cancelled'].map(s=>'<option'+(r.status===s?' selected':'')+'>'+s+'</option>').join('')+'</select></td><td><button class="btn btn-d btn-sm" onclick="delResv('+r.id+')">✕</button></td></tr>').join('')
+    :'<tr><td colspan="8" style="text-align:center;padding:22px;color:var(--tmut);font-style:italic">No reservations yet.</td></tr>';
+}
+function updResv(id,status){const r=resvs.find(x=>x.id===id);if(r){r.status=status;sv('resvs',resvs)}}
+function delResv(id){resvs=resvs.filter(r=>r.id!==id);sv('resvs',resvs);renderResvs()}
+
+/* =============== FEEDBACK =============== */
+function renderFeedback(){
+  const b=document.getElementById('fbBody');
+  document.getElementById('fbCount').textContent=feedbacks.length;
+  b.innerHTML=feedbacks.length?[...feedbacks].reverse().map(f=>'<tr><td>'+fmtDate(f.ts)+'</td><td>'+escH(f.name||'Anon')+'</td><td>'+escH(f.branch||'—')+'</td><td>'+'⭐'.repeat(f.rating||0)+'</td><td style="max-width:240px;font-size:.8rem">'+escH(f.comment||'—')+'</td><td><button class="btn btn-d btn-sm" onclick="delFB('+f.id+')">✕</button></td></tr>').join('')
+    :'<tr><td colspan="6" style="text-align:center;padding:22px;color:var(--tmut);font-style:italic">No feedback yet.</td></tr>';
+}
+function delFB(id){feedbacks=feedbacks.filter(f=>f.id!==id);sv('feedbacks',feedbacks);renderFeedback()}
+
+/* =============== MENU PAGE =============== */
+function buildMenuCats(){
+  const el=document.getElementById('menuCat');
+  if(el&&el.options.length===1){
+    Object.keys(MENU_DATA).forEach(cat=>{
+      const o=document.createElement('option');o.value=cat;o.textContent=cat;el.appendChild(o);
+    });
+  }
+}
+function renderMenu(){
+  const q=(document.getElementById('menuQ')?.value||'').toLowerCase();
+  const cat=document.getElementById('menuCat')?.value||'';
+  let html='',count=0;
+  Object.entries(MENU_DATA).forEach(([c,items])=>{
+    if(cat&&c!==cat)return;
+    const f=items.filter(i=>!q||i.name.toLowerCase().includes(q)||i.desc.toLowerCase().includes(q));
+    if(!f.length)return;
+    html+='<div style="padding:7px 14px;background:var(--bgd);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut);border-top:1px solid var(--bgd)">'+escH(c)+'</div>';
+    f.forEach(item=>{count++;html+='<div class="mrow"><div class="mrow-name"><strong style="font-size:.88rem">'+escH(item.name)+'</strong><div style="font-size:.73rem;color:var(--tmut);margin-top:2px">'+escH(item.desc)+'</div></div><div style="font-size:.7rem;color:var(--sage);min-width:22px">'+(!item.jain?'🌿':'')+'</div><div class="mrow-price">₹'+item.price+'</div></div>';});
+  });
+  document.getElementById('menuCount').textContent=count+' items';
+  document.getElementById('menuBody').innerHTML=html||'<div style="padding:20px;text-align:center;color:var(--tmut)">No items found.</div>';
+}
+
+/* =============== BILL GENERATOR =============== */
+function buildBillItemList(){
+  const el=document.getElementById('bill-items-list');
+  if(!el)return;
+  let h='';
+  Object.entries(MENU_DATA).forEach(([cat,items])=>{
+    h+='<div style="padding:7px 13px;background:var(--bgd);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tmut)">'+escH(cat)+'</div>';
+    items.forEach(item=>{
+      const sid='bill_'+item.name.replace(/[^a-z0-9]/gi,'_');
+      const safeName=item.name.replace(/"/g,'&quot;');
+      h+='<div style="display:flex;align-items:center;padding:8px 13px;border-bottom:1px solid var(--bgd);gap:9px" data-bsid="'+sid+'" data-bname="'+safeName+'" data-bprice="'+item.price+'">'+
+        '<div style="flex:1;font-size:.83rem;color:var(--tm)">'+escH(item.name)+'</div>'+
+        '<span style="color:var(--tc);font-size:.8rem;min-width:44px;text-align:right">&#8377;'+item.price+'</span>'+
+        '<div style="display:flex;align-items:center;gap:5px">'+
+          '<button data-bdir="-1" style="width:24px;height:24px;border-radius:50%;border:1.5px solid var(--bgd);background:#fff;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;color:var(--tmut)">&#8722;</button>'+
+          '<span id="bqty_'+sid+'" style="width:18px;text-align:center;font-size:.88rem;font-weight:600;color:var(--br)">0</span>'+
+          '<button data-bdir="1" style="width:24px;height:24px;border-radius:50%;background:var(--tc);border:none;cursor:pointer;font-size:.95rem;color:#fff;display:flex;align-items:center;justify-content:center">+</button>'+
+        '</div></div>';
+    });
+  });
+  el.innerHTML=h;
+  el.addEventListener('click',function(e){
+    const btn=e.target.closest('[data-bdir]');
+    if(!btn)return;
+    const row=btn.closest('[data-bsid]');
+    if(!row)return;
+    billC(row.dataset.bsid, row.dataset.bname, parseInt(row.dataset.bprice), parseInt(btn.dataset.bdir));
+  });
+  // Restore existing billCart quantities
+  Object.entries(billCart).forEach(([name,{qty}])=>{
+    const sid='bill_'+name.replace(/[^a-z0-9]/gi,'_');
+    const el2=document.getElementById('bqty_'+sid);
+    if(el2) el2.textContent=qty;
+  });
+}
+
+function billC(sid,name,price,d){
+  if(!billCart[name])billCart[name]={price,qty:0};
+  billCart[name].qty=Math.max(0,billCart[name].qty+d);
+  if(billCart[name].qty===0)delete billCart[name];
+  const el=document.getElementById('bqty_'+sid);
+  if(el)el.textContent=billCart[name]?.qty||0;
+  updateBillPreview();
+}
+
+function clearBillCart(){
+  const names=Object.keys(billCart);
+  billCart={};
+  names.forEach(n=>{const sid='bill_'+n.replace(/[^a-z0-9]/gi,'_');const el=document.getElementById('bqty_'+sid);if(el)el.textContent='0'});
+  document.getElementById('bill-table').value='';
+  document.getElementById('bill-cname').value='';
+  updateBillPreview();
+}
+
+function renderBillPreview(){
+  const el=document.getElementById('billPreview');
+  if(!el)return;
+  const entries=Object.entries(billCart);
+  const table   = document.getElementById('bill-table')?.value||'';
+  const cname   = document.getElementById('bill-cname')?.value||'';
+  const cphone  = document.getElementById('bill-cphone')?.value||'';
+  const branch  = document.getElementById('bill-branch')?.value||'Café Pibatie';
+  const discPct = parseFloat(document.getElementById('bill-discount')?.value)||0;
+  const payment = document.getElementById('bill-payment')?.value||'Cash';
+  const notes   = document.getElementById('bill-notes')?.value||'';
+  const typeLabel = currentBillType==='dine'?'🪑 Dine-in':currentBillType==='pickup'?'🛍️ Takeaway':'📦 Delivery';
+  const now=new Date().toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  let subtotal=0, rows='';
+  entries.forEach(([name,{price,qty}])=>{
+    const sub=price*qty; subtotal+=sub;
+    rows+='<tr><td style="padding:4px 6px;color:var(--tmut)">'+qty+'×</td>'+
+          '<td style="padding:4px 6px">'+escH(name)+'</td>'+
+          '<td style="padding:4px 6px;text-align:right">₹'+sub+'</td></tr>';
+  });
+  const discount=Math.round(subtotal*discPct/100);
+  const afterDisc=subtotal-discount;
+  const sgst=Math.round(afterDisc*0.025), cgst=Math.round(afterDisc*0.025), grand=afterDisc+sgst+cgst;
+
+  const metaRows = [
+    table  ? '<div style="font-size:.78rem;margin-top:3px"><strong>Table: '+escH(table)+'</strong></div>' : '',
+    cname  ? '<div style="font-size:.75rem;color:var(--tmut)">Guest: '+escH(cname)+'</div>' : '',
+    cphone ? '<div style="font-size:.75rem;color:var(--tmut)">Phone: '+escH(cphone)+'</div>' : '',
+  ].join('');
+
+  el.innerHTML =
+    '<div style="text-align:center;border-bottom:2px dashed #ddd;padding-bottom:10px;margin-bottom:10px">'+
+      '<div style="font-size:1.2rem;font-weight:700;color:#3D2B1F;font-family:Georgia,serif">Café Pibatie</div>'+
+      '<div style="font-size:.72rem;color:var(--tmut);margin-top:1px">'+escH(branch)+'</div>'+
+      '<div style="font-size:.72rem;color:var(--tmut)">Modern Hindustani Fusion · 100% Vegetarian</div>'+
+      '<div style="font-size:.7rem;color:var(--tmut);margin-top:3px">'+now+'</div>'+
+      '<div style="font-size:.74rem;color:var(--gold,#C9A24E);margin-top:2px;font-weight:600">'+typeLabel+'</div>'+
+      metaRows+
+    '</div>'+
+    (entries.length===0
+      ? '<p style="text-align:center;color:var(--tmut);font-style:italic;padding:16px 8px">Add items using the list on the left.</p>'
+      : '<table style="width:100%;border-collapse:collapse">'+
+          '<thead><tr style="border-bottom:1px solid #ddd">'+
+            '<th style="padding:4px 6px;text-align:left;font-size:.66rem;color:var(--tmut)">QTY</th>'+
+            '<th style="padding:4px 6px;text-align:left;font-size:.66rem;color:var(--tmut)">ITEM</th>'+
+            '<th style="padding:4px 6px;text-align:right;font-size:.66rem;color:var(--tmut)">AMT</th>'+
+          '</tr></thead><tbody>'+rows+'</tbody></table>'+
+          '<div style="border-top:1px solid #ddd;margin-top:8px;padding-top:8px">'+
+            '<div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--tmut);margin-bottom:3px"><span>Subtotal</span><span>₹'+subtotal+'</span></div>'+
+            (discPct>0?'<div style="display:flex;justify-content:space-between;font-size:.76rem;color:#e06060;margin-bottom:3px"><span>Discount ('+discPct+'%)</span><span>−₹'+discount+'</span></div>':'')+''+
+            '<div style="display:flex;justify-content:space-between;font-size:.73rem;color:var(--tmut);margin-bottom:2px"><span>SGST (2.5%)</span><span>₹'+sgst+'</span></div>'+
+            '<div style="display:flex;justify-content:space-between;font-size:.73rem;color:var(--tmut);margin-bottom:6px"><span>CGST (2.5%)</span><span>₹'+cgst+'</span></div>'+
+            '<div style="display:flex;justify-content:space-between;font-size:.95rem;font-weight:700;color:#3D2B1F;border-top:2px solid #3D2B1F;padding-top:6px"><span>TOTAL</span><span>₹'+grand+'</span></div>'+
+            '<div style="margin-top:6px;font-size:.73rem;color:var(--tmut)">💳 Payment: <strong>'+escH(payment)+'</strong></div>'+
+            (notes?'<div style="margin-top:3px;font-size:.72rem;color:var(--tmut)">📝 '+escH(notes)+'</div>':'')+
+          '</div>'
+    )+
+    '<div style="text-align:center;border-top:2px dashed #ddd;margin-top:12px;padding-top:8px;font-size:.66rem;color:var(--tmut)">Thank you for visiting Café Pibatie! 🌿<br>+91 79771 81838 · +91 93262 43023<br>@cafepibatie</div>';
+}
+function updateBillPreview(){ renderBillPreview(); }
+
+/* == Bill Type Selector == */
+let currentBillType = 'dine';
+function setBillType(type) {
+  currentBillType = type;
+  ['dine','pickup','online'].forEach(t => {
+    const btn = document.getElementById('btype-' + t);
+    if (btn) btn.classList.toggle('active', t === type);
+  });
+  const tableGrp = document.getElementById('bill-table-grp');
+  const addrGrp = document.getElementById('bill-addr-grp');
+  if (tableGrp) tableGrp.style.display = type === 'dine' ? '' : 'none';
+  if (addrGrp) addrGrp.style.display = type === 'online' ? '' : 'none';
+  renderBillPreview();
+}
+
+function buildBillText(asText) {
+  const entries = Object.entries(billCart);
+  if (!entries.length) return '';
+  const table   = document.getElementById('bill-table')?.value || '';
+  const cname   = document.getElementById('bill-cname')?.value || '';
+  const cphone  = document.getElementById('bill-cphone')?.value || '';
+  const caddr   = document.getElementById('bill-caddr')?.value || '';
+  const branch  = document.getElementById('bill-branch')?.value || '';
+  const discPct = parseFloat(document.getElementById('bill-discount')?.value) || 0;
+  const payment = document.getElementById('bill-payment')?.value || 'Cash';
+  const notes   = document.getElementById('bill-notes')?.value || '';
+  const now     = new Date().toLocaleString('en-IN', {dateStyle:'short', timeStyle:'short'});
+
+  let subtotal = 0, lines = '';
+  entries.forEach(([n, {price, qty}]) => {
+    const sub = price * qty; subtotal += sub;
+    lines += '  ' + qty + '× ' + n + '  —  ₹' + sub + '\n';
+  });
+  const discount = Math.round(subtotal * discPct / 100);
+  const afterDisc = subtotal - discount;
+  const sgst = Math.round(afterDisc * 0.025);
+  const cgst = Math.round(afterDisc * 0.025);
+  const grand = afterDisc + sgst + cgst;
+
+  const typeLabel = currentBillType === 'dine' ? '🪑 Dine-in' : currentBillType === 'pickup' ? '🛍️ Takeaway' : '📦 Delivery';
+
+  let ctx = '';
+  if (currentBillType === 'dine' && table) ctx += '🪑 Table: ' + table + '\n';
+  if (cname)  ctx += '👤 Guest: ' + cname + '\n';
+  if (cphone) ctx += '📞 Phone: ' + cphone + '\n';
+  if (currentBillType === 'online' && caddr) ctx += '🏠 Address: ' + caddr + '\n';
+  if (branch) ctx += '📍 Branch: ' + branch + '\n';
+
+  return '🧾 BILL — Café Pibatie\n' +
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+    '📅 ' + now + '   ' + typeLabel + '\n' +
+    (ctx ? ctx : '') +
+    '\nITEMS:\n' + lines +
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+    'Subtotal:          ₹' + subtotal + '\n' +
+    (discount > 0 ? 'Discount (' + discPct + '%): -₹' + discount + '\n' : '') +
+    'SGST (2.5%):       ₹' + sgst + '\n' +
+    'CGST (2.5%):       ₹' + cgst + '\n' +
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+    'TOTAL:             ₹' + grand + '\n' +
+    'Payment:           ' + payment + '\n' +
+    (notes ? 'Notes: ' + notes + '\n' : '') +
+    '\nThank you for dining at Café Pibatie! 🌿\n' +
+    'Borivali: +91 79771 81838 | Andheri: +91 93262 43023';
+}
+
+function sendBillWA(){
+  const entries=Object.entries(billCart);
+  if(!entries.length){toast('Add items to the bill first','err');return}
+  const cphone = document.getElementById('bill-cphone')?.value.trim() || '';
+  const msg = buildBillText(true);
+  // If customer phone is filled, send to customer; otherwise send to café WA
+  const phone = cphone.replace(/[^0-9]/g,'') || cfg.wa;
+  const waPhone = phone.startsWith('91') ? phone : '91' + phone.replace(/^0/,'');
+  window.open('https://wa.me/' + waPhone + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function sendBillSMS(){
+  const entries = Object.entries(billCart);
+  if (!entries.length) { toast('Add items to the bill first', 'err'); return; }
+  const cphone = document.getElementById('bill-cphone')?.value.trim() || '';
+  if (!cphone) { toast('Enter customer phone number to send SMS', 'err'); return; }
+  const msg = buildBillText(true);
+  // Use sms: URI which opens native SMS app
+  const phone = cphone.replace(/[^0-9+]/g, '');
+  window.open('sms:' + phone + '?body=' + encodeURIComponent(msg), '_blank');
+  toast('SMS app opened with bill details');
+}
+
+function printBill(){
+  var entries = Object.entries(billCart);
+  if(!entries.length){toast('Add items to the bill first','err');return}
+  var table   = document.getElementById('bill-table').value||'';
+  var cname   = document.getElementById('bill-cname').value||'';
+  var cphone  = document.getElementById('bill-cphone').value||'';
+  var branch  = document.getElementById('bill-branch').value||'Cafe Pibatie';
+  var discPct = parseFloat(document.getElementById('bill-discount').value)||0;
+  var payment = document.getElementById('bill-payment').value||'Cash';
+  var notes   = document.getElementById('bill-notes').value||'';
+  var now     = new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});
+  var typeLabel = currentBillType==='dine'?'Dine-in':currentBillType==='pickup'?'Takeaway':'Delivery';
+
+  var subtotal=0, rows='';
+  entries.forEach(function(e){
+    var n=e[0], price=e[1].price, qty=e[1].qty;
+    var sub=price*qty; subtotal+=sub;
+    rows+='<tr><td>'+n+'</td><td style="text-align:center">'+qty+'</td><td style="text-align:right">&#8377;'+price+'</td><td style="text-align:right">&#8377;'+sub+'</td></tr>';
+  });
+  var discount=Math.round(subtotal*discPct/100);
+  var afterDisc=subtotal-discount;
+  var sgst=Math.round(afterDisc*0.025), cgst=Math.round(afterDisc*0.025), grand=afterDisc+sgst+cgst;
+
+  var discRow = discPct>0 ? '<tr><td colspan="3">Discount ('+discPct+'%)</td><td style="text-align:right;color:#e06060">-&#8377;'+discount+'</td></tr>' : '';
+  var notesHtml = notes ? '<div class="divider"></div><p style="font-size:10.5px">Notes: '+notes+'</p>' : '';
+  var tableHtml = table ? '<p>Table: <b>'+table+'</b></p>' : '';
+  var cnameHtml = cname ? '<p>Guest: '+cname+'</p>' : '';
+  var cphoneHtml = cphone ? '<p>Phone: '+cphone+'</p>' : '';
+
+  var billHtml = '<!DOCTYPE html><html><head><title>Bill - Cafe Pibatie</title>' +
+    '<style>*{margin:0;padding:0;box-sizing:border-box}' +
+    'body{font-family:"Courier New",monospace;padding:16px;max-width:320px;margin:0 auto;font-size:12px;color:#222}' +
+    'h2{text-align:center;font-size:1.3rem;font-family:Georgia,serif;margin-bottom:2px}' +
+    '.sub{text-align:center;font-size:11px;color:#555;margin-bottom:8px}' +
+    '.divider{border-top:1px dashed #888;margin:8px 0}' +
+    'table{width:100%;border-collapse:collapse;font-size:11.5px}' +
+    'thead tr{border-bottom:1px solid #333}' +
+    'th{text-align:left;padding:3px 2px}' +
+    'td{padding:3px 2px;vertical-align:top}' +
+    '.total-row{font-weight:bold;font-size:12.5px}' +
+    '.footer{text-align:center;font-size:10.5px;color:#555;margin-top:10px}' +
+    '@media print{body{padding:0}}' +
+    '<\/style><\/head><body>' +
+    '<h2>Cafe Pibatie<\/h2>' +
+    '<div class="sub">'+branch+'<br>'+now+' &middot; '+typeLabel+'<\/div>' +
+    '<div class="divider"><\/div>' +
+    tableHtml + cnameHtml + cphoneHtml +
+    '<div class="divider"><\/div>' +
+    '<table><thead><tr><th>Item<\/th><th>Qty<\/th><th>Rate<\/th><th>Amt<\/th><\/tr><\/thead><tbody>'+rows+'<\/tbody><\/table>' +
+    '<div class="divider"><\/div>' +
+    '<table>' +
+    '<tr><td colspan="3">Subtotal<\/td><td style="text-align:right">&#8377;'+subtotal+'<\/td><\/tr>' +
+    discRow +
+    '<tr><td colspan="3">SGST (2.5%)<\/td><td style="text-align:right">&#8377;'+sgst+'<\/td><\/tr>' +
+    '<tr><td colspan="3">CGST (2.5%)<\/td><td style="text-align:right">&#8377;'+cgst+'<\/td><\/tr>' +
+    '<tr class="total-row"><td colspan="3">TOTAL<\/td><td style="text-align:right">&#8377;'+grand+'<\/td><\/tr>' +
+    '<tr><td colspan="3">Payment<\/td><td style="text-align:right">'+payment+'<\/td><\/tr>' +
+    '<\/table>' +
+    notesHtml +
+    '<div class="footer">Thank you for visiting Cafe Pibatie!<br>+91 79771 81838 &middot; +91 93262 43023<br>@cafepibatie<\/div>' +
+    '<scr'+'ipt>window.onload=function(){window.print()}<\/sc'+'ript><\/body><\/html>';
+
+  var win=window.open('','_blank','width=400,height=700');
+  if(win){ win.document.write(billHtml); win.document.close(); }
+  else { toast('Allow popups to print bill','err'); }
+}
+
+/* =============== QR =============== */
+function genQR(){
+  const url=document.getElementById('qrUrl')?.value.trim();
+  const cnt=parseInt(document.getElementById('qrCount')?.value)||10;
+  if(!url){toast('Enter website URL first','err');return}
+  if(!currentBranch){toast('Please log in to a branch first','err');return}
+  const grid=document.getElementById('qrGrid');
+  grid.innerHTML='<h3 style="text-align:center;margin-bottom:20px;color:var(--br)">'+currentBranch.charAt(0).toUpperCase()+currentBranch.slice(1)+' Branch - Table QR Codes</h3>';
+  for(let t=1;t<=cnt;t++){
+    const u=url+(url.includes('?')?'&':'?')+'branch='+currentBranch+'&table='+t;
+    const card=document.createElement('div');
+    card.className='qr-card';
+    card.innerHTML='<strong>Table '+t+'</strong>'+
+      '<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data='+encodeURIComponent(u)+'" width="120" height="120" loading="lazy" style="display:block;margin:0 auto 6px;border-radius:4px;border:1px solid var(--bgd)"/>'+
+      '<p>Scan to order</p>'+
+      '<a href="'+escH(u)+'" target="_blank">🔗 Test</a>';
+    grid.appendChild(card);
+  }
+  toast(cnt+' QR codes generated for '+currentBranch+' branch!');
+}
+
+/* =============== SETTINGS =============== */
+function loadSettings(){
+  document.getElementById('cfg-wa').value=cfg.wa||'';
+  document.getElementById('cfg-gr').value=cfg.gr||'';
+  document.getElementById('cfg-name').value=cfg.name||'Café Pibatie';
+  document.getElementById('cfg-ph1').value=cfg.ph1||'';
+  document.getElementById('cfg-ph2').value=cfg.ph2||'';
+  document.getElementById('cfg-email').value=cfg.email||'';
+  // Update current credentials display
+  document.getElementById('currentUsername').textContent = getStoredAdminUser(currentBranch);
+  document.getElementById('currentBranchDisplay').textContent = currentBranch ? currentBranch.charAt(0).toUpperCase() + currentBranch.slice(1) + ' Branch' : 'Default';
+}
+function saveSettings(){
+  cfg.wa=document.getElementById('cfg-wa')?.value.trim();
+  cfg.gr=document.getElementById('cfg-gr')?.value.trim();
+  sv('cfg',cfg);toast('Settings saved!');
+}
+function saveCafeInfo(){
+  cfg.name=document.getElementById('cfg-name')?.value.trim();
+  cfg.ph1=document.getElementById('cfg-ph1')?.value.trim();
+  cfg.ph2=document.getElementById('cfg-ph2')?.value.trim();
+  cfg.email=document.getElementById('cfg-email')?.value.trim();
+  sv('cfg',cfg);toast('Café info saved!');
+}
+
+/* =============== CLEAR DATA =============== */
+function clearData(key){
+  const labels={orders:'all orders',takeaways:'all takeaways',resvs:'all reservations',feedbacks:'all feedback'};
+  if(!confirm('Delete '+labels[key]+'? This cannot be undone.'))return;
+  if(key==='orders'){orders=[];sv('orders',orders);renderOrders();updateDashboard()}
+  else if(key==='takeaways'){takeaways=[];sv('takeaways',takeaways);renderTakeaways();updateDashboard()}
+  else if(key==='resvs'){resvs=[];sv('resvs',resvs);renderResvs()}
+  else if(key==='feedbacks'){feedbacks=[];sv('feedbacks',feedbacks);renderFeedback()}
+  toast('Cleared!','err');
+}
+
+/* =============== UTILS =============== */
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function fmtTime(ts){if(!ts)return '—';const d=new Date(ts);return d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})+' · '+d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})}
+function fmtDate(ts){if(!ts)return '—';return new Date(ts).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}
+</script>
+</body>
+</html>
